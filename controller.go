@@ -1,14 +1,12 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"time"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/apimachinery/pkg/util/wait"
 	appsinformers "k8s.io/client-go/informers/apps/v1"
@@ -226,78 +224,12 @@ func (c *Controller) syncHandler(key string) error {
 			return nil
 		}
 
-		return err
-	}
-
-	gateway := Network.Spec.Gateway
-	if gateway == "" {
-		// We choose to absorb the error here as the worker would requeue the
-		// resource otherwise. Instead, the next time the resource is updated
-		// the resource will be queued again.
-		utilruntime.HandleError(fmt.Errorf("%s: gateway name must be specified", key))
-		return nil
-	}
-
-	// Get the deployment with the name specified in Network.spec
-	deployment, err := c.deploymentsLister.Deployments(Network.Namespace).Get(gateway)
-	// If the resource doesn't exist, we'll create it
-	if errors.IsNotFound(err) {
-		deployment, err = c.kubeclientset.AppsV1().Deployments(Network.Namespace).Create(context.TODO(), newDeployment(Network), metav1.CreateOptions{})
-	}
-
-	// If an error occurs during Get/Create, we'll requeue the item so we can
-	// attempt processing again later. This could have been caused by a
-	// temporary network failure, or any other transient reason.
-	if err != nil {
-		return err
-	}
-
-	// If the Deployment is not controlled by this Network resource, we should log
-	// a warning to the event recorder and return error msg.
-	if !metav1.IsControlledBy(deployment, Network) {
-		msg := fmt.Sprintf(MessageResourceExists, deployment.Name)
-		c.recorder.Event(Network, corev1.EventTypeWarning, ErrResourceExists, msg)
-		return fmt.Errorf(msg)
-	}
-
-	// If this number of the replicas on the Network resource is specified, and the
-	// number does not equal the current desired replicas on the Deployment, we
-	// should update the Deployment resource.
-	if Network.Spec.Replicas != nil && *Network.Spec.Replicas != *deployment.Spec.Replicas {
-		klog.V(4).Infof("Network %s replicas: %d, deployment replicas: %d", name, *Network.Spec.Replicas, *deployment.Spec.Replicas)
-		deployment, err = c.kubeclientset.AppsV1().Deployments(Network.Namespace).Update(context.TODO(), newDeployment(Network), metav1.UpdateOptions{})
-	}
-
-	// If an error occurs during Update, we'll requeue the item so we can
-	// attempt processing again later. This could have been caused by a
-	// temporary network failure, or any other transient reason.
-	if err != nil {
-		return err
-	}
-
-	// Finally, we update the status block of the Network resource to reflect the
-	// current state of the world
-	err = c.updateNetworkStatus(Network, deployment)
-	if err != nil {
+		utilruntime.HandleError(fmt.Errorf("failed to list network by: %s%s", namespace, name))
 		return err
 	}
 
 	c.recorder.Event(Network, corev1.EventTypeNormal, SuccessSynced, MessageResourceSynced)
 	return nil
-}
-
-func (c *Controller) updateNetworkStatus(Network *samplev1.Network, deployment *appsv1.Deployment) error {
-	// NEVER modify objects from the store. It's a read-only, local cache.
-	// You can use DeepCopy() to make a deep copy of original object and modify this copy
-	// Or create a copy manually for better performance
-	NetworkCopy := Network.DeepCopy()
-	NetworkCopy.Status.AvailableReplicas = deployment.Status.AvailableReplicas
-	// If the CustomResourceSubresources feature gate is not enabled,
-	// we must use Update instead of UpdateStatus to update the Status block of the Network resource.
-	// UpdateStatus will not allow changes to the Spec of the resource,
-	// which is ideal for ensuring nothing other than resource status has been updated.
-	_, err := c.sampleclientset.SamplecontrollerV1alpha1().Networks(Network.Namespace).Update(context.TODO(), NetworkCopy, metav1.UpdateOptions{})
-	return err
 }
 
 // enqueueNetwork takes a Network resource and converts it into a namespace/name
@@ -319,74 +251,15 @@ func (c *Controller) enqueueNetwork(obj interface{}) {
 // It then enqueues that Network resource to be processed. If the object does not
 // have an appropriate OwnerReference, it will simply be skipped.
 func (c *Controller) handleObject(obj interface{}) {
-	var object metav1.Object
-	var ok bool
-	if object, ok = obj.(metav1.Object); !ok {
-		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)
-		if !ok {
-			utilruntime.HandleError(fmt.Errorf("error decoding object, invalid type"))
-			return
-		}
-		object, ok = tombstone.Obj.(metav1.Object)
-		if !ok {
-			utilruntime.HandleError(fmt.Errorf("error decoding object tombstone, invalid type"))
-			return
-		}
-		klog.V(4).Infof("Recovered deleted object '%s' from tombstone", object.GetName())
-	}
-	klog.V(4).Infof("Processing object: %s", object.GetName())
-	if ownerRef := metav1.GetControllerOf(object); ownerRef != nil {
-		// If this object is not owned by a Network, we should not do anything more
-		// with it.
-		if ownerRef.Kind != "Network" {
-			return
-		}
-
-		Network, err := c.NetworksLister.Networks(object.GetNamespace()).Get(ownerRef.Name)
-		if err != nil {
-			klog.V(4).Infof("ignoring orphaned object '%s' of Network '%s'", object.GetSelfLink(), ownerRef.Name)
-			return
-		}
-
-		c.enqueueNetwork(Network)
+	var (
+		key string
+		err error
+	)
+	key, err = cache.DeletionHandlingMetaNamespaceKeyFunc(obj)
+	if err != nil {
+		utilruntime.HandleError(err)
 		return
 	}
-}
+	c.workqueue.AddRateLimited(key)
 
-// newDeployment creates a new Deployment for a Network resource. It also sets
-// the appropriate OwnerReferences on the resource so handleObject can discover
-// the Network resource that 'owns' it.
-func newDeployment(Network *samplev1alpha1.Network) *appsv1.Deployment {
-	labels := map[string]string{
-		"app":        "nginx",
-		"controller": Network.Name,
-	}
-	return &appsv1.Deployment{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      Network.Spec.DeploymentName,
-			Namespace: Network.Namespace,
-			OwnerReferences: []metav1.OwnerReference{
-				*metav1.NewControllerRef(Network, samplev1alpha1.SchemeGroupVersion.WithKind("Network")),
-			},
-		},
-		Spec: appsv1.DeploymentSpec{
-			Replicas: Network.Spec.Replicas,
-			Selector: &metav1.LabelSelector{
-				MatchLabels: labels,
-			},
-			Template: corev1.PodTemplateSpec{
-				ObjectMeta: metav1.ObjectMeta{
-					Labels: labels,
-				},
-				Spec: corev1.PodSpec{
-					Containers: []corev1.Container{
-						{
-							Name:  "nginx",
-							Image: "nginx:latest",
-						},
-					},
-				},
-			},
-		},
-	}
 }
