@@ -19,10 +19,10 @@ import (
 	"k8s.io/client-go/util/workqueue"
 	"k8s.io/klog/v2"
 
-	clientset "github.com/2016-huanglins/k8s-controller-custom-resource/pkg/generated/clientset/versioned"
-	networkscheme "github.com/2016-huanglins/k8s-controller-custom-resource/pkg/generated/clientset/versioned/scheme"
-	informers "github.com/2016-huanglins/k8s-controller-custom-resource/pkg/generated/informers/externalversions/samplecrd/v1"
-	listers "github.com/2016-huanglins/k8s-controller-custom-resource/pkg/generated/listers/samplecrd/v1"
+	clientset "github.com/happlins/k8s-controller-custom-resource/pkg/generated/clientset/versioned"
+	networkscheme "github.com/happlins/k8s-controller-custom-resource/pkg/generated/clientset/versioned/scheme"
+	informers "github.com/happlins/k8s-controller-custom-resource/pkg/generated/informers/externalversions/samplecrd/v1"
+	listers "github.com/happlins/k8s-controller-custom-resource/pkg/generated/listers/samplecrd/v1"
 )
 
 const controllerAgentName = "network-controller"
@@ -220,7 +220,7 @@ func (c *Controller) syncHandler(key string) error {
 		// The Network resource may no longer exist, in which case we stop
 		// processing.
 		if errors.IsNotFound(err) {
-			utilruntime.HandleError(fmt.Errorf("Network '%s' in work queue no longer exists", key))
+			utilruntime.HandleError(fmt.Errorf("network '%s' in work queue no longer exists", key))
 			return nil
 		}
 

@@ -1,7 +1,7 @@
 package v1
 
 import (
-	"github.com/2016-huanglins/k8s-controller-custom-resource/pkg/apis/samplecrd"
+	"github.com/happlins/k8s-controller-custom-resource/pkg/apis/samplecrd"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"

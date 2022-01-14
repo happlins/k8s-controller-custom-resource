@@ -19,8 +19,8 @@ limitations under the License.
 package samplecrd
 
 import (
-	internalinterfaces "github.com/2016-huanglins/k8s-controller-custom-resource/pkg/generated/informers/externalversions/internalinterfaces"
-	v1 "github.com/2016-huanglins/k8s-controller-custom-resource/pkg/generated/informers/externalversions/samplecrd/v1"
+	internalinterfaces "github.com/happlins/k8s-controller-custom-resource/pkg/generated/informers/externalversions/internalinterfaces"
+	v1 "github.com/happlins/k8s-controller-custom-resource/pkg/generated/informers/externalversions/samplecrd/v1"
 )
 
 // Interface provides access to each of this group's versions.

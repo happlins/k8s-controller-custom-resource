@@ -21,7 +21,7 @@ package fake
 import (
 	"context"
 
-	samplecrdv1 "github.com/2016-huanglins/k8s-controller-custom-resource/pkg/apis/samplecrd/v1"
+	samplecrdv1 "github.com/happlins/k8s-controller-custom-resource/pkg/apis/samplecrd/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	labels "k8s.io/apimachinery/pkg/labels"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"

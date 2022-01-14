@@ -23,9 +23,9 @@ import (
 	sync "sync"
 	time "time"
 
-	versioned "github.com/2016-huanglins/k8s-controller-custom-resource/pkg/generated/clientset/versioned"
-	internalinterfaces "github.com/2016-huanglins/k8s-controller-custom-resource/pkg/generated/informers/externalversions/internalinterfaces"
-	samplecrd "github.com/2016-huanglins/k8s-controller-custom-resource/pkg/generated/informers/externalversions/samplecrd"
+	versioned "github.com/happlins/k8s-controller-custom-resource/pkg/generated/clientset/versioned"
+	internalinterfaces "github.com/happlins/k8s-controller-custom-resource/pkg/generated/informers/externalversions/internalinterfaces"
+	samplecrd "github.com/happlins/k8s-controller-custom-resource/pkg/generated/informers/externalversions/samplecrd"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"

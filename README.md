@@ -13,12 +13,12 @@ $ go mod vendor
 $ ./hack/update-codegen.sh
 ```
 
-生成的代码是在当前目录下按照**github.com/2016-huanglins/....**的目录结构，你需要将相对应的apis目录下的文件和generated目录下的文件，拷贝到pkg目录下，并删除github.com目录
+生成的代码是在当前目录下按照**github.com/happlins/....**的目录结构，你需要将相对应的apis目录下的文件和generated目录下的文件，拷贝到pkg目录下，并删除github.com目录
 
 
 克隆项目到本地
 ```shell script
-$ git clone https://github.com/2016-huanglins/k8s-controller-custom-resource.git
+$ git clone https://github.com/happlins/k8s-controller-custom-resource.git
 $ cd k8s-controller-custom-resource
 ```
 

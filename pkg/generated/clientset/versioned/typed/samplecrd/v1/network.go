@@ -22,8 +22,8 @@ import (
 	"context"
 	"time"
 
-	v1 "github.com/2016-huanglins/k8s-controller-custom-resource/pkg/apis/samplecrd/v1"
-	scheme "github.com/2016-huanglins/k8s-controller-custom-resource/pkg/generated/clientset/versioned/scheme"
+	v1 "github.com/happlins/k8s-controller-custom-resource/pkg/apis/samplecrd/v1"
+	scheme "github.com/happlins/k8s-controller-custom-resource/pkg/generated/clientset/versioned/scheme"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
 	watch "k8s.io/apimachinery/pkg/watch"

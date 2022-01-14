@@ -9,9 +9,9 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/klog/v2"
 
-	clientset "github.com/2016-huanglins/k8s-controller-custom-resource/pkg/generated/clientset/versioned"
-	informers "github.com/2016-huanglins/k8s-controller-custom-resource/pkg/generated/informers/externalversions"
-	"github.com/2016-huanglins/k8s-controller-custom-resource/pkg/signals"
+	clientset "github.com/happlins/k8s-controller-custom-resource/pkg/generated/clientset/versioned"
+	informers "github.com/happlins/k8s-controller-custom-resource/pkg/generated/informers/externalversions"
+	"github.com/happlins/k8s-controller-custom-resource/pkg/signals"
 )
 
 var (

@@ -19,7 +19,7 @@ limitations under the License.
 package fake
 
 import (
-	v1 "github.com/2016-huanglins/k8s-controller-custom-resource/pkg/generated/clientset/versioned/typed/samplecrd/v1"
+	v1 "github.com/happlins/k8s-controller-custom-resource/pkg/generated/clientset/versioned/typed/samplecrd/v1"
 	rest "k8s.io/client-go/rest"
 	testing "k8s.io/client-go/testing"
 )

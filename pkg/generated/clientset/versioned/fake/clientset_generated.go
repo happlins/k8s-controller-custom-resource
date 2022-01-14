@@ -19,9 +19,9 @@ limitations under the License.
 package fake
 
 import (
-	clientset "github.com/2016-huanglins/k8s-controller-custom-resource/pkg/generated/clientset/versioned"
-	samplecrdv1 "github.com/2016-huanglins/k8s-controller-custom-resource/pkg/generated/clientset/versioned/typed/samplecrd/v1"
-	fakesamplecrdv1 "github.com/2016-huanglins/k8s-controller-custom-resource/pkg/generated/clientset/versioned/typed/samplecrd/v1/fake"
+	clientset "github.com/happlins/k8s-controller-custom-resource/pkg/generated/clientset/versioned"
+	samplecrdv1 "github.com/happlins/k8s-controller-custom-resource/pkg/generated/clientset/versioned/typed/samplecrd/v1"
+	fakesamplecrdv1 "github.com/happlins/k8s-controller-custom-resource/pkg/generated/clientset/versioned/typed/samplecrd/v1/fake"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/discovery"

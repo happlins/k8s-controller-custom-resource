@@ -1,4 +1,4 @@
-module github.com/2016-huanglins/k8s-controller-custom-resource
+module github.com/happlins/k8s-controller-custom-resource
 
 go 1.15
 

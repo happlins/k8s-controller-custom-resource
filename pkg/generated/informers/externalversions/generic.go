@@ -21,7 +21,7 @@ package externalversions
 import (
 	"fmt"
 
-	v1 "github.com/2016-huanglins/k8s-controller-custom-resource/pkg/apis/samplecrd/v1"
+	v1 "github.com/happlins/k8s-controller-custom-resource/pkg/apis/samplecrd/v1"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"
 	cache "k8s.io/client-go/tools/cache"
 )
